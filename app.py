@@ -1,12 +1,12 @@
 # Import dependencies
 from flask import Flask, render_template
-from flask_pymongo import flask_pymongo
+from flask_pymongo import PyMongo
 import scraping
 
 # Flask set-up
 app = Flask(__name__)
 # Use flask_pymongo to set up mongo connection
-app.config["MONGO_URI"] = "mongodb://localhost:27017//mars_app"
+app.config["MONGO_URI"] = "mongodb://localhost:27017/mars_app"
 mongo = PyMongo(app)
 
 # Create the webpages routes
@@ -25,4 +25,4 @@ def scrape():
 
 # App run
 if __name__ == "__main__":
-    app.run
+    app.run(debug=True)
