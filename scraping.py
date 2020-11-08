@@ -18,13 +18,13 @@ def scrape_all():
         "news_paragraph": news_paragraph,
         "featured_image": featured_image(browser),
         "facts": mars_facts(),
-        "last_modified": dt.datetime.now()
+        "last_modified": dt.datetime.now(),
+        "image_url" : hemisphere_image()
     }
 
     # Stop webdriver and return data
     browser.quit()
     return data
-
 
 def mars_news(browser):
 
@@ -101,7 +101,46 @@ def mars_facts():
     # Convert dataframe into HTML format, add bootstrap
     return df.to_html(classes="table table-striped")
 
-if __name__ == "__main__":
+def hemisphere_image():
+    browser = Browser("chrome", executable_path="chromedriver", headless=True)
+    url = 'https://astrogeology.usgs.gov/search/results?q=hemisphere+enhanced&k1=target&v1=Mars'
+    browser.visit(url)
+    html = browser.html
+    bs = soup(html, 'html.parser')
+    try:
+        button = browser.find_by_id("product-section")
+        bs = soup(browser.html)
 
+        result = bs.find("div", class_="collapsible results")
+    except BaseException:
+        return None
+    href = []
+    for x in result.find_all("a"):
+        image = x.get("href")
+        href.append(image)
+    base_url = "https://astrogeology.usgs.gov"
+    images = [base_url + x for x in set(href)]
+    browser.visit(images[0])
+
+    img_url =[]
+    for img in images:
+        browser.visit(img)
+        html = browser.html 
+        BS = soup(html, "html.parser")
+        img_to_use= BS.find("ul").find("li").find("a").get("href")
+        img_url.append(img_to_use)
+
+    hrefs = list(set(href))
+    title = [" ".join(h.split('/')[-1].split('_')).title() for h in hrefs]
+    hemisphere_image_urls = []
+    for i in range(0,4):
+        hemisphere = {}
+        hemisphere["url"] = img_url[i]
+        hemisphere["title"] = title[i]
+        hemisphere_image_urls.append(hemisphere)
+    return hemisphere_image_urls
+
+if __name__ == "__main__":
+    print(scrape_all()["image_url"])
     # If running as script, print scraped data
-    print(scrape_all())
+    # print(scrape_all())
