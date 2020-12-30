@@ -1,4 +1,4 @@
-# Mission-to-Mars
+# Mission to Mars Web Scrapping
 ## Project Objective
 This project aims to provide up-to-date information about Mars by consistently scrapping important information released on the website.
 ## Methods Used
